@@ -1,0 +1,47 @@
+---
+- name: Deploy VM su VMware
+  hosts: localhost
+  gather_facts: no
+  vars:
+    vcenter_hostname: "{{ vcenter_host }}"  # Questo viene ottenuto automaticamente dal Vault di AWX
+    validate_certs: no
+    esxi_host: "yesxba04.yoctoitba.local"
+    vm_datacenter: "YoctoIT Basiglio DC"
+    vm_cluster: "YoctoIT VMWare Farm Basiglio"
+    vm_network: "0690_yService"
+    vm_datastore: "yDS01_V7K"
+    vm_template: "W2019-Tmpl-202411"
+    vm_cpu: 2
+    vm_memory: 4096
+    vm_disk: 40
+  tasks:
+    - name: Clonare una VM dal template
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"  # Gestito dal Vault
+        password: "{{ vcenter_password }}"  # Gestito dal Vault
+        validate_certs: no
+        datacenter: "{{ vm_datacenter }}"
+        cluster: "{{ vm_cluster }}"
+        folder: "/{{ vm_datacenter }}/vm/Ansible"
+        name: "{{ vm_name }}"  # Prompted variable
+        template: "{{ vm_template }}"
+        state: poweredon
+        hardware:
+          memory_mb: "{{ vm_memory }}"
+          num_cpus: "{{ vm_cpu }}"
+        networks:
+          - name: "{{ vm_network }}"
+        disk:
+          - size_gb: "{{ vm_disk }}"
+            type: thin
+            datastore: "{{ vm_datastore }}"
+      register: vm_result  # Salviamo il risultato per estrarre l'IP
+
+    - name: "Salvare l'IP della VM"
+      set_fact:
+        vm_ip: "{{ vm_result.instance.ipAddress }}"  # Estrae l'IP
+
+    - name: Debug dell'IP della VM
+      debug:
+        msg: "L'IP della VM è: {{ vm_ip }}"
