@@ -17,7 +17,7 @@
     - name: Clonare una VM dal template
       community.vmware.vmware_guest:
         # vCenter host e credenziali sono gestiti dalla credenziale associata al Job Template
-        hostname: "{{ vcenter_host }}"  # Non è necessario definirla nel playbook
+        hostname: "10.243.60.20" # Non è necessario definirla nel playbook
         username: "{{ vcenter_username }}"  # Gestito dal Vault di AWX
         password: "{{ vcenter_password }}"  # Gestito dal Vault di AWX
         validate_certs: no
