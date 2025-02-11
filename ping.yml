@@ -6,10 +6,11 @@
     vm_ip: "{{ vm_ip }}"  # Variabile passata dal playbook precedente
 
   tasks:
-    - name: Verifica la connettività della VM
+    - name: Verifica la connettività della VM (Ping)
       wait_for:
         host: "{{ vm_ip }}"
-        port: 22  # Porta SSH (o quella che usi per la connessione)
         state: started
-        timeout: 300  # Tempo massimo di attesa (5 minuti)
-        delay: 10     # Intervallo tra i tentativi
+        timeout: 300  # 5 minuti di attesa
+        delay: 10     # intervallo tra i tentativi
+        port: 0       # port 0 indica l'uso di ping (ICMP)
+        ping: yes      # Abilita il controllo ping ICMP
