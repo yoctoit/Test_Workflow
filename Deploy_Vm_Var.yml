@@ -17,9 +17,9 @@
     - name: Clonare una VM dal template
       community.vmware.vmware_guest:
         # vCenter host e credenziali sono gestiti dalla credenziale associata al Job Template
-        hostname: "{{ lookup('ansible.builtin.env', 'VMWARE_HOST') }}" # Non è necessario definirla nel playbook
-        username: "{{ lookup('ansible.builtin.env', 'VMWARE_USER) }}"  # Gestito dal Vault di AWX
-        password: "{{ lookup('ansible.builtin.env', 'VMWARE_PASSWORD') }}"  # Gestito dal Vault di AWX
+        hostname: "{{ lookup('ansible.builtin.env', 'VMWARE_HOST') }}"  # vCenter host
+        username: "{{ lookup('ansible.builtin.env', 'VMWARE_USER') }}"  # vCenter username
+        password: "{{ lookup('ansible.builtin.env', 'VMWARE_PASSWORD') }}"  # vCenter password
         validate_certs: no
         datacenter: "{{ vm_datacenter }}"
         cluster: "{{ vm_cluster }}"
