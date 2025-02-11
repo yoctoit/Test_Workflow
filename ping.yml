@@ -1,0 +1,15 @@
+---
+- name: Verifica la connettività della VM
+  hosts: localhost
+  gather_facts: no
+  vars:
+    vm_ip: "{{ vm_ip }}"  # Variabile passata dal playbook precedente
+
+  tasks:
+    - name: Verifica la connettività della VM
+      wait_for:
+        host: "{{ vm_ip }}"
+        port: 22  # Porta SSH (o quella che usi per la connessione)
+        state: started
+        timeout: 300  # Tempo massimo di attesa (5 minuti)
+        delay: 10     # Intervallo tra i tentativi
