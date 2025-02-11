@@ -41,10 +41,19 @@
       debug:
         msg: "{{ vm_result }}"
 
-    - name: "Salvare l'IP della VM"
+    - name: Attendere che la VM risponda al ping
+      wait_for:
+        host: "{{ vm_name }}"
+        port: 3389  # Per esempio, RDP (puoi usare qualsiasi porta aperta sulla VM)
+        state: started
+        timeout: 300  # Tempo massimo per aspettare
+        delay: 10     # Intervallo tra i tentativi
+      register: vm_ping
+
+    - name: Recupera l'IP della VM dalla risorsa
       set_fact:
-        vm_ip: "{{ vm_result.instance.network.ipAddress }}"  # Assumiamo una struttura diversa
-      when: vm_result.instance.network is defined
+        vm_ip: "{{ vm_result.instance.networks[0].ipAddresses[0] }}"  # Cambia questa parte se l'IP è in un'altra struttura
+      when: vm_ping.state == 'started'
 
     - name: Debug dell'IP della VM
       debug:
