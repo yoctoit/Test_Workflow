@@ -3,7 +3,6 @@
   hosts: localhost
   gather_facts: no
   vars:
-    vcenter_hostname: "{{ vcenter_host }}"  # Questo viene ottenuto automaticamente dal Vault di AWX
     validate_certs: no
     esxi_host: "yesxba04.yoctoitba.local"
     vm_datacenter: "YoctoIT Basiglio DC"
@@ -17,9 +16,10 @@
   tasks:
     - name: Clonare una VM dal template
       community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"  # Gestito dal Vault
-        password: "{{ vcenter_password }}"  # Gestito dal Vault
+        # vCenter host e credenziali sono gestiti dalla credenziale associata al Job Template
+        hostname: "{{ vcenter_host }}"  # Non è necessario definirla nel playbook
+        username: "{{ vcenter_username }}"  # Gestito dal Vault di AWX
+        password: "{{ vcenter_password }}"  # Gestito dal Vault di AWX
         validate_certs: no
         datacenter: "{{ vm_datacenter }}"
         cluster: "{{ vm_cluster }}"
