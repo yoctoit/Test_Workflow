@@ -16,7 +16,6 @@
   tasks:
     - name: Clonare una VM dal template
       community.vmware.vmware_guest:
-        # vCenter host e credenziali sono gestiti dalla credenziale associata al Job Template
         hostname: "{{ lookup('ansible.builtin.env', 'VMWARE_HOST') }}"  # vCenter host
         username: "{{ lookup('ansible.builtin.env', 'VMWARE_USER') }}"  # vCenter username
         password: "{{ lookup('ansible.builtin.env', 'VMWARE_PASSWORD') }}"  # vCenter password
@@ -38,9 +37,14 @@
             datastore: "{{ vm_datastore }}"
       register: vm_result  # Salviamo il risultato per estrarre l'IP
 
+    - name: Debug dell'output della VM
+      debug:
+        msg: "{{ vm_result }}"
+
     - name: "Salvare l'IP della VM"
       set_fact:
-        vm_ip: "{{ vm_result.instance.ipAddress }}"  # Estrae l'IP
+        vm_ip: "{{ vm_result.instance.network.ipAddress }}"  # Assumiamo una struttura diversa
+      when: vm_result.instance.network is defined
 
     - name: Debug dell'IP della VM
       debug:
